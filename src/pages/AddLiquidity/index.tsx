@@ -9,11 +9,9 @@ import { sendAnalyticsEvent, TraceEvent, useTrace } from 'analytics'
 import { useToggleAccountDrawer } from 'components/AccountDrawer'
 import OwnershipWarning from 'components/addLiquidity/OwnershipWarning'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
-import { isSupportedChain } from 'constants/chains'
 import usePrevious from 'hooks/usePrevious'
 import { useSingleCallResult } from 'lib/hooks/multicall'
 import { BodyWrapper } from 'pages/AppBody'
-import { PositionPageUnsupportedContent } from 'pages/Pool/PositionPage'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { AlertTriangle } from 'react-feather'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
@@ -74,16 +72,16 @@ const StyledBodyWrapper = styled(BodyWrapper)<{ $hasExistingPosition: boolean }>
   max-width: 640px;
 `
 
-export default function AddLiquidityWrapper() {
-  const { chainId } = useWeb3React()
-  if (isSupportedChain(chainId)) {
-    return <AddLiquidity />
-  } else {
-    return <PositionPageUnsupportedContent />
-  }
-}
+// export default function AddLiquidityWrapper() {
+//   const { chainId } = useWeb3React()
+//   if (isSupportedChain(chainId)) {
+//     return <AddLiquidity />
+//   } else {
+//     return <PositionPageUnsupportedContent />
+//   }
+// }
 
-function AddLiquidity() {
+export default function AddLiquidity() {
   const navigate = useNavigate()
   const {
     currencyIdA,
@@ -104,6 +102,14 @@ function AddLiquidity() {
   const addTransaction = useTransactionAdder()
   const positionManager = useV3NFTPositionManagerContract()
 
+  const previousChainId = usePrevious(chainId)
+  useEffect(() => {
+    console.log('chainID:', chainId)
+    console.log('prev chain id', previousChainId)
+    if (previousChainId !== chainId) {
+      navigate(`/add/ETH`)
+    }
+  }, [chainId, previousChainId, navigate])
   // check for existing position if tokenId in url
   const { position: existingPositionDetails, loading: positionLoading } = useV3PositionFromTokenId(
     tokenId ? BigNumber.from(tokenId) : undefined

@@ -164,6 +164,9 @@ const StyledNumericalInput = styled(NumericalInput)<{ $loading: boolean }>`
 const StyledPrefetchBalancesWrapper = styled(PrefetchBalancesWrapper)<{ $fullWidth: boolean }>`
   width: ${({ $fullWidth }) => ($fullWidth ? '100%' : 'auto')};
 `
+// function isUnknownCurrency(currency: Currency | null | undefined) {
+//   return currency?.name?.toLowerCase() == 'unknown token' && currency?.symbol?.toLowerCase() == 'unknown'
+// }
 
 interface CurrencyInputPanelProps {
   value: string
@@ -218,7 +221,7 @@ export default function CurrencyInputPanel({
   }, [setModalOpen])
 
   const chainAllowed = isSupportedChain(chainId)
-
+  // currency = isUnknownCurrency(currency) ? null : currency
   return (
     <InputPanel id={id} hideInput={hideInput} {...rest}>
       {!locked && (
@@ -271,7 +274,7 @@ export default function CurrencyInputPanel({
                             ? currency.symbol.slice(0, 4) +
                               '...' +
                               currency.symbol.slice(currency.symbol.length - 5, currency.symbol.length)
-                            : currency?.symbol) || <Trans>Select a token</Trans>}
+                            : currency?.symbol) || <Trans>Select an token</Trans>}
                         </StyledTokenName>
                       )}
                     </RowFixed>
